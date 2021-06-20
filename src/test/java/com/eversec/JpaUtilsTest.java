@@ -36,11 +36,11 @@ public class JpaUtilsTest {
         tx.begin();
         /*保存一个客户到数据库中*/
         Customer customer = new Customer();
-        customer.setCustName("今晚打老虎");
-        customer.setCustAddress("中国上海滩");
-        customer.setCustIndustry("trembling");
-        customer.setCustPhone("99990000");
-        customer.setCustLevel("心悦会员");
+        customer.setCustName("令狐冲");
+        customer.setCustAddress("北岳恒山");
+        customer.setCustIndustry("武林中人");
+        customer.setCustPhone("333333333");
+        customer.setCustLevel("顶级杀手");
         /*保存*/
         entityManager.persist(customer);
         /*提交事务*/
@@ -64,11 +64,15 @@ public class JpaUtilsTest {
 
 
     }
+
     /*
-    * getReference：获取的是实体的代理对象
-    * sql查询在获取实体的属性信息时才发生
-    *
-    * */
+     * getReference：获取的是实体的代理对象
+     * sql查询在获取实体的属性信息时才发生，也就是懒加载
+     *
+     * find:立即加载
+     *
+     *
+     * */
     @Test
     public void testReference() {
         EntityManager entityManager = JpaUtils.getEntityManager();
@@ -82,5 +86,40 @@ public class JpaUtilsTest {
         JpaUtils.close();
 
 
+    }
+
+    /*删除*/
+    @Test
+    public void testRemove() {
+        EntityManager entityManager = JpaUtils.getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        // 1.根据Id查询
+        Customer customer = entityManager.find(Customer.class, 1l);
+        System.out.println(customer);
+        // 2.删除
+        entityManager.remove(customer);
+
+        transaction.commit();
+        entityManager.close();
+        JpaUtils.close();
+    }
+
+    /*更新*/
+    @Test
+    public void testUpdate() {
+        EntityManager entityManager = JpaUtils.getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        // 1.根据Id查询
+        Customer customer = entityManager.find(Customer.class, 2l);
+        System.out.println(customer);
+        customer.setCustIndustry("just do it");
+        // 2.更新
+        entityManager.merge(customer);
+
+        transaction.commit();
+        entityManager.close();
+        JpaUtils.close();
     }
 }
